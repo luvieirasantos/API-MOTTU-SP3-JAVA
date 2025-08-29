@@ -1,106 +1,54 @@
-# Mottu Auth API
+# 🚀 Mottu Auth API - Sistema de Autenticação
 
-Sistema de autenticação completo desenvolvido para Sprint 3 - Java Advanced FIAP, utilizando Spring Boot, Spring Security, Thymeleaf e Flyway.
+## 📋 Descrição do Projeto
 
-## 🚀 Funcionalidades
+**Mottu Auth API** é uma aplicação web completa desenvolvida em **Spring Boot** para demonstrar um sistema robusto de autenticação e autorização. Este projeto foi desenvolvido para a **Sprint 3 - Java Advanced** da FIAP, implementando as melhores práticas de desenvolvimento e segurança.
 
-- **Autenticação JWT**: Sistema de login seguro com tokens JWT
-- **Cadastro de Usuários**: Formulário completo com validações
-- **Spring Security**: Controle de acesso baseado em perfis (ADMIN/USUARIO)
-- **Thymeleaf**: Interface web responsiva e moderna
-- **Flyway**: Controle de versão do banco de dados
-- **Oracle Database**: Conectividade com banco Oracle
-- **Validações**: Validações client-side e server-side
+### 🎯 Objetivos da Sprint 3
+
+- ✅ **Thymeleaf**: Camada de visualização com fragmentos reutilizáveis
+- ✅ **Flyway**: Controle de versões do banco de dados
+- ✅ **Spring Security**: Autenticação e controle de acesso
+- ✅ **Funcionalidades Completas**: Fluxos de autenticação e gerenciamento de usuários
+
+## 🏗️ Arquitetura da Aplicação
+
+```
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   Frontend      │    │   Backend       │    │   Database      │
+│   (Thymeleaf)   │◄──►│  (Spring Boot)  │◄──►│   (Oracle)      │
+│                 │    │                 │    │                 │
+│ • Login         │    │ • Controllers   │    │ • Usuários      │
+│ • Dashboard     │    │ • Services      │    │ • Perfis        │
+│ • Admin         │    │ • Security      │    │ • Auditoria     │
+│ • Cadastro      │    │ • JWT           │    │                 │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+```
 
 ## 🛠️ Tecnologias Utilizadas
 
-- **Java 17**
-- **Spring Boot 3.2.0**
-- **Spring Security**
-- **Spring Data JPA**
-- **Thymeleaf**
-- **Flyway 10.7.1**
-- **Oracle JDBC Driver**
-- **JWT (JSON Web Tokens)**
-- **Bootstrap 5.3.0**
-- **Maven**
+### Backend
+- **Java 17** - Linguagem de programação
+- **Spring Boot 3.2.0** - Framework principal
+- **Spring Security 6.2.0** - Segurança e autenticação
+- **Spring Data JPA** - Persistência de dados
+- **Spring Boot Thymeleaf** - Template engine
 
-## 📋 Pré-requisitos
+### Frontend
+- **Thymeleaf** - Template engine server-side
+- **Bootstrap 5.3.0** - Framework CSS responsivo
+- **Font Awesome 6.0.0** - Ícones
+- **JavaScript ES6+** - Interatividade
 
-- Java 17 ou superior
-- Maven 3.6+
-- Oracle Database (acesso ao banco FIAP)
-- Conexão com internet para dependências
+### Banco de Dados
+- **Oracle Database 19.3** - Banco de dados principal
+- **Flyway 10.8.0** - Migração e versionamento
+- **HikariCP** - Connection pooling
 
-## 🔧 Configuração
-
-### 1. Clone o repositório
-```bash
-git clone <url-do-repositorio>
-cd Sprint3-Java
-```
-
-### 2. Configuração do Banco de Dados
-O sistema está configurado para conectar ao banco Oracle da FIAP:
-- **URL**: `oracle.fiap.com.br:1521:ORCL`
-- **Usuário**: `rm558935`
-- **Senha**: `310805`
-
-### 3. Executar Migrações Flyway
-```bash
-mvn flyway:migrate
-```
-
-### 4. Executar a Aplicação
-```bash
-mvn spring-boot:run
-```
-
-A aplicação estará disponível em: `http://localhost:8080`
-
-## 📱 Endpoints da API
-
-### Autenticação
-- `POST /api/auth/cadastro` - Cadastro de usuários
-- `POST /api/auth/login` - Login de usuários
-- `GET /api/auth/perfil` - Obter perfil do usuário logado
-
-### Páginas Web
-- `GET /` - Página inicial
-- `GET /login` - Página de login
-- `GET /cadastro` - Página de cadastro
-- `GET /dashboard` - Dashboard do usuário (requer autenticação)
-- `GET /admin` - Painel administrativo (requer perfil ADMIN)
-
-## 👥 Usuários de Teste
-
-### Administrador
-- **Email**: `admin@mottu.com`
-- **Senha**: `admin123`
-
-### Usuário Comum
-- **Email**: `user@mottu.com`
-- **Senha**: `user123`
-
-## 🗄️ Estrutura do Banco de Dados
-
-### Tabela: MOTTU_USUARIOS_SISTEMA
-- `ID_USUARIO` - Identificador único (auto-incremento)
-- `NOME_COMPLETO` - Nome completo do usuário
-- `EMAIL_USUARIO` - Email único para login
-- `SENHA_CRIPTOGRAFADA` - Senha criptografada com BCrypt
-- `PERFIL_ACESSO` - Perfil (ADMIN ou USUARIO)
-- `ATIVO` - Status da conta (1 = ativo, 0 = inativo)
-- `DATA_CRIACAO` - Data de criação do registro
-- `DATA_ATUALIZACAO` - Data da última atualização
-
-## 🔐 Segurança
-
-- **Spring Security**: Configurado para autenticação JWT
-- **BCrypt**: Criptografia de senhas
-- **JWT**: Tokens de autenticação com expiração configurável
-- **Validações**: Validações de entrada em todos os formulários
-- **Controle de Acesso**: Rotas protegidas por perfil de usuário
+### Segurança
+- **JWT (JSON Web Tokens)** - Autenticação stateless
+- **BCrypt** - Criptografia de senhas
+- **Spring Security** - Controle de acesso
 
 ## 📁 Estrutura do Projeto
 
@@ -108,120 +56,378 @@ A aplicação estará disponível em: `http://localhost:8080`
 src/
 ├── main/
 │   ├── java/com/fiap/mottu/
-│   │   ├── config/          # Configurações (Security, etc.)
-│   │   ├── controller/      # Controladores REST e Web
-│   │   ├── dto/            # Data Transfer Objects
-│   │   ├── entity/         # Entidades JPA
-│   │   ├── repository/     # Repositórios JPA
-│   │   ├── security/       # Filtros de segurança
-│   │   ├── service/        # Serviços de negócio
+│   │   ├── config/           # Configurações (Security, Web)
+│   │   ├── controller/       # Controladores REST e Web
+│   │   ├── dto/             # Data Transfer Objects
+│   │   ├── entity/          # Entidades JPA
+│   │   ├── repository/      # Repositórios de dados
+│   │   ├── security/        # Filtros e configurações de segurança
+│   │   ├── service/         # Lógica de negócio
 │   │   └── MottuAuthApplication.java
-│   └── resources/
-│       ├── db/migration/   # Migrações Flyway
-│       ├── templates/      # Templates Thymeleaf
-│       │   ├── fragments/  # Fragmentos reutilizáveis
-│       │   ├── admin.html
-│       │   ├── cadastro.html
-│       │   ├── dashboard.html
-│       │   ├── home.html
-│       │   └── login.html
-│       └── application.yml # Configurações da aplicação
+│   ├── resources/
+│   │   ├── db/migration/    # Scripts Flyway
+│   │   ├── templates/       # Templates Thymeleaf
+│   │   │   ├── fragments/   # Fragmentos reutilizáveis
+│   │   │   ├── home.html    # Página inicial
+│   │   │   ├── login.html   # Formulário de login
+│   │   │   ├── cadastro.html # Formulário de cadastro
+│   │   │   ├── dashboard.html # Dashboard do usuário
+│   │   │   └── admin.html   # Painel administrativo
+│   │   └── application.yml  # Configurações da aplicação
+│   └── test/                # Testes unitários
 ```
 
-## 🚀 Deploy
+## 🚀 Como Executar a Aplicação
 
-### 1. Build do Projeto
+### Pré-requisitos
+
+- **Java 17** ou superior
+- **Maven 3.6+**
+- **Oracle Database 19.3** (ou superior)
+- **Git** para clonar o repositório
+
+### 1. Clone o Repositório
+
 ```bash
-mvn clean package
+git clone https://github.com/seu-usuario/Sprint3-Java.git
+cd Sprint3-Java
 ```
 
-### 2. Executar JAR
+### 2. Configuração do Banco de Dados
+
+#### 2.1 Acesso ao Oracle FIAP
+A aplicação está configurada para usar o banco Oracle da FIAP:
+- **Host**: `oracle.fiap.com.br`
+- **Porta**: `1521`
+- **SID**: `ORCL`
+- **Usuário**: `rm558935`
+- **Senha**: `310805`
+
+#### 2.2 Configuração Local (Opcional)
+Se quiser usar um banco local, edite o `application.yml`:
+
+```yaml
+spring:
+  datasource:
+    url: jdbc:oracle:thin:@localhost:1521:XE
+    username: seu_usuario
+    password: sua_senha
+    driver-class-name: oracle.jdbc.OracleDriver
+```
+
+### 3. Executar a Aplicação
+
+#### 3.1 Via Maven
 ```bash
-java -jar target/mottu-auth-api-1.0.0.jar
+mvn clean install
+mvn spring-boot:run
 ```
 
-### 3. Configurações de Produção
-Para deploy em produção, ajuste as seguintes configurações em `application.yml`:
-- URL do banco de dados
-- Credenciais de acesso
-- Chave secreta JWT
-- Configurações de logging
+#### 3.2 Via IDE
+- Abra o projeto no IntelliJ IDEA ou Eclipse
+- Execute a classe `MottuAuthApplication`
+- A aplicação estará disponível em `http://localhost:8080`
 
-## 📊 Migrações Flyway
+### 4. Acessar a Aplicação
 
-O sistema inclui 4 migrações principais:
+- **URL Principal**: http://localhost:8080
+- **Login**: http://localhost:8080/login
+- **Cadastro**: http://localhost:8080/cadastro
+- **Dashboard**: http://localhost:8080/dashboard (após login)
+- **Admin**: http://localhost:8080/admin (apenas para administradores)
 
-1. **V1**: Criação da tabela de usuários
-2. **V2**: Inserção do usuário administrador padrão
-3. **V3**: Inserção do usuário de teste
-4. **V4**: Criação de trigger para atualização automática
+## 👥 Usuários de Teste
+
+### Administrador
+- **Email**: `admin@mottu.com`
+- **Senha**: `admin123`
+- **Perfil**: `ADMIN`
+- **Acesso**: Todas as funcionalidades
+
+### Usuário Padrão
+- **Email**: `user@mottu.com`
+- **Senha**: `user123`
+- **Perfil**: `USUARIO`
+- **Acesso**: Funcionalidades básicas
+
+## 🔐 Funcionalidades de Segurança
+
+### Autenticação JWT
+- **Token**: JSON Web Token com expiração de 2 meses (60 dias)
+- **Armazenamento**: LocalStorage do navegador
+- **Validação**: Automática em todas as requisições API
+
+### Controle de Acesso
+- **Rotas Públicas**: Home, Login, Cadastro
+- **Rotas Protegidas**: Dashboard, Admin, APIs
+- **Perfis**: ADMIN e USUARIO com permissões diferentes
+
+### Criptografia
+- **Senhas**: Criptografadas com BCrypt
+- **Tokens**: Assinados com chave secreta
+- **Comunicação**: HTTPS recomendado para produção
+
+### Configuração de Expiração JWT
+- **Duração**: 2 meses (60 dias)
+- **Cálculo**: 60 dias × 24 horas × 60 minutos × 60 segundos × 1000 milissegundos = 5.184.000.000 ms
+- **Vantagem**: Menos necessidade de relogin para usuários ativos
+- **Segurança**: Tokens ainda são validados a cada requisição
+
+## 🗄️ Migrações do Banco de Dados
+
+### Versões Flyway Implementadas
+
+#### V1 - Criação da Tabela de Usuários
+- Tabela `MOTTU_USUARIOS_SISTEMA`
+- Campos: ID, Nome, Email, Senha, Perfil, Status, Datas
+- Índices para performance
+- Comentários para documentação
+
+#### V2 - Usuário Administrador
+- Inserção do usuário admin padrão
+- Credenciais: admin@mottu.com / admin123
+- Perfil de acesso ADMIN
+
+#### V3 - Usuário de Teste
+- Inserção do usuário padrão para testes
+- Credenciais: user@mottu.com / user123
+- Perfil de acesso USUARIO
+
+#### V4 - Trigger de Auditoria
+- Trigger para atualização automática de timestamps
+- Campo `DATA_ATUALIZACAO` atualizado automaticamente
+- Auditoria de mudanças nos registros
+
+### Executar Migrações
+
+```bash
+# Verificar status das migrações
+mvn flyway:info
+
+# Executar migrações pendentes
+mvn flyway:migrate
+
+# Reparar migrações com falha
+mvn flyway:repair
+
+# Limpar banco (cuidado!)
+mvn flyway:clean
+```
+
+## 🎨 Interface do Usuário
+
+### Páginas Principais
+
+#### Home (`/`)
+- Apresentação do sistema
+- Links para login e cadastro
+- Informações sobre funcionalidades
+
+#### Login (`/login`)
+- Formulário de autenticação
+- Validação de credenciais
+- Redirecionamento baseado no perfil
+- Credenciais de teste exibidas
+
+#### Cadastro (`/cadastro`)
+- Formulário de registro
+- Validação de dados
+- Criptografia automática de senha
+- Redirecionamento após sucesso
+
+#### Dashboard (`/dashboard`)
+- Informações do usuário logado
+- Estatísticas da conta
+- Ações rápidas (atualizar perfil, ver token)
+- Navegação para outras áreas
+
+#### Admin (`/admin`)
+- Painel administrativo
+- Gerenciamento de usuários
+- Estatísticas do sistema
+- Acesso restrito a administradores
+
+### Fragmentos Reutilizáveis
+
+- **Header**: Navegação principal com menu responsivo
+- **Footer**: Informações da aplicação e links úteis
+- **Layout**: Estrutura base para todas as páginas
+
+## 🔧 Configurações
+
+### application.yml
+```yaml
+spring:
+  datasource:
+    url: jdbc:oracle:thin:@oracle.fiap.com.br:1521:ORCL
+    username: 
+    password: 
+  
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+  
+  flyway:
+    enabled: false  # Temporariamente desabilitado
+    baseline-on-migrate: true
+
+server:
+  port: 8080
+
+jwt:
+  secret: mottuSecretKey2024Sprint3JavaAdvancedFIAP
+  expiration: 5184000000  # 2 meses (60 dias)
+```
+
+### Logs
+- **Spring Security**: DEBUG
+- **Aplicação**: DEBUG
+- **Flyway**: INFO
+- **Hibernate**: SQL queries exibidas
 
 ## 🧪 Testes
 
 ### Executar Testes
 ```bash
+# Testes unitários
 mvn test
-```
 
-### Testes de Integração
-```bash
+# Testes de integração
 mvn verify
+
+# Cobertura de código
+mvn jacoco:report
 ```
 
-## 📝 Logs
+### Estrutura de Testes
+- **MottuAuthApplicationTests**: Teste de contexto da aplicação
+- **Testes de Segurança**: Validação de rotas protegidas
+- **Testes de Serviços**: Lógica de negócio
+- **Testes de Repositórios**: Acesso a dados
 
-A aplicação está configurada com logging detalhado para:
-- Spring Security (DEBUG)
-- Aplicação (DEBUG)
-- Flyway (INFO)
+## 📊 Monitoramento e Logs
 
-## 🔧 Comandos Úteis
+### Endpoints de Monitoramento
+- **Health Check**: `/actuator/health`
+- **Info**: `/actuator/info`
+- **Metrics**: `/actuator/metrics`
 
-### Limpar e Recompilar
-```bash
-mvn clean compile
+### Logs Principais
+- **Aplicação**: Inicialização e operação
+- **Segurança**: Tentativas de login e acesso
+- **Banco**: Queries SQL e conexões
+- **Flyway**: Status das migrações
+
+## 🚨 Troubleshooting
+
+### Problemas Comuns
+
+#### 1. Erro de Conexão com Banco
+```
+Caused by: java.sql.SQLException: ORA-12541: TNS:no listener
+```
+**Solução**: Verificar se o Oracle está rodando e acessível
+
+#### 2. Erro de Migração Flyway
+```
+Detected failed migration to version 1
+```
+**Solução**: Executar `mvn flyway:repair`
+
+#### 3. Erro de Autenticação
+```
+Access Denied - HTTP ERROR 403
+```
+**Solução**: Verificar se o usuário está logado e tem permissão
+
+#### 4. Erro de Bean Circular
+```
+Circular dependency detected
+```
+**Solução**: Verificar configurações de dependências
+
+### Logs de Debug
+Para debug detalhado, adicione ao `application.yml`:
+```yaml
+logging:
+  level:
+    com.fiap.mottu: DEBUG
+    org.springframework.security: DEBUG
+    org.flywaydb: DEBUG
 ```
 
-### Executar com Perfil Específico
-```bash
-mvn spring-boot:run -Dspring.profiles.active=dev
+## 🔄 Deploy e Produção
+
+### Preparação para Produção
+1. **Configurações de Segurança**
+   - Alterar chave JWT secreta
+   - Configurar HTTPS
+   - Definir políticas de senha
+
+2. **Banco de Dados**
+   - Usar credenciais de produção
+   - Configurar backup automático
+   - Monitorar performance
+
+3. **Logs e Monitoramento**
+   - Configurar log rotation
+   - Implementar alertas
+   - Monitorar métricas de uso
+
+### Docker (Futuro)
+```dockerfile
+FROM openjdk:17-jre-slim
+COPY target/mottu-auth-api-1.0.0.jar app.jar
+EXPOSE 8080
+ENTRYPOINT ["java", "-jar", "/app.jar"]
 ```
 
-### Verificar Dependências
-```bash
-mvn dependency:tree
-```
+## 📚 Documentação Adicional
 
-## 🐛 Solução de Problemas
+### APIs REST
+- **POST** `/api/auth/cadastro` - Cadastro de usuário
+- **POST** `/api/auth/login` - Autenticação
+- **GET** `/api/auth/perfil` - Perfil do usuário (autenticado)
 
-### Erro de Conexão com Banco
-- Verificar se o banco Oracle está acessível
-- Confirmar credenciais em `application.yml`
-- Verificar se as migrações Flyway foram executadas
+### Segurança
+- **JWT**: Implementação completa
+- **BCrypt**: Criptografia de senhas
+- **Spring Security**: Configuração avançada
+- **CORS**: Configurado para desenvolvimento
 
-### Erro de Porta
-- Verificar se a porta 8080 está disponível
-- Alterar porta em `application.yml` se necessário
+### Banco de Dados
+- **Oracle**: Configuração e conexão
+- **Flyway**: Migrações e versionamento
+- **JPA/Hibernate**: Mapeamento de entidades
+- **HikariCP**: Connection pooling
 
-### Erro de JWT
-- Verificar se a chave secreta está configurada
-- Confirmar expiração do token
+
+### Padrões de Código
+- **Java**: Seguir convenções Java
+- **Spring**: Usar anotações padrão
+- **HTML**: Semântico e acessível
+- **CSS**: Responsivo e organizado
+- **JavaScript**: ES6+ com async/await
+
+## 📄 Licença
+
+Este projeto foi desenvolvido para fins educacionais na **FIAP** como parte da **Sprint 3 - Java Advanced**.
+
+## 👨‍💻 Desenvolvedor
+
+- **Nome**: Lu Vieira Santos
+- **RA**: 558935
+- **Curso**: ADS
+- **FIAP**: Faculdade de Informática e Administração Paulista
 
 ## 📞 Suporte
 
 Para dúvidas ou problemas:
-- Verificar logs da aplicação
-- Consultar documentação do Spring Boot
-- Verificar configurações do banco Oracle
-
-## 📄 Licença
-
-Este projeto foi desenvolvido para fins educacionais na FIAP.
-
-## 👨‍💻 Desenvolvedor
-
-Desenvolvido para Sprint 3 - Java Advanced FIAP.
+- **Email**: [henrique3.terceiro@gmail.com]
+- **Issues**: Use a aba Issues do GitHub
+- **Documentação**: Consulte este README
 
 ---
 
-**Nota**: Esta aplicação está configurada para conectar ao banco Oracle da FIAP. Para uso em outros ambientes, ajuste as configurações de banco de dados em `application.yml`.
+**Mottu Auth API** - Sistema de autenticação robusto e seguro desenvolvido com as melhores práticas de desenvolvimento Java e Spring Boot. 🚀

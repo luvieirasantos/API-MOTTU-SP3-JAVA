@@ -32,4 +32,4 @@ logging:
 
 jwt:
   secret: mottuSecretKey2024Sprint3JavaAdvancedFIAP
-  expiration: 86400000 # 24 horas em milissegundos
+  expiration: 5184000000 # 2 meses em milissegundos (60 dias)
