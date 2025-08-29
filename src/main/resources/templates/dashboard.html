@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Mottu Auth API</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <style>
+        .navbar-brand {
+            font-weight: bold;
+            color: #007bff !important;
+        }
+        .dashboard-container {
+            min-height: 80vh;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 40px 0;
+        }
+        .welcome-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 20px;
+        }
+        .stats-card {
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border: none;
+            border-radius: 15px;
+            transition: transform 0.3s ease;
+        }
+        .stats-card:hover {
+            transform: translateY(-5px);
+        }
+        .stats-icon {
+            font-size: 2.5rem;
+            color: #007bff;
+        }
+        .footer {
+            background-color: #343a40;
+            color: white;
+            padding: 20px 0;
+        }
+        .profile-section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-shield-alt me-2"></i>
+                Mottu Auth API
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">
+                            <i class="fas fa-home me-1"></i>Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/dashboard">
+                            <i class="fas fa-tachometer-alt me-1"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item" id="adminLink" style="display: none;">
+                        <a class="nav-link" href="/admin">
+                            <i class="fas fa-cog me-1"></i>Admin
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <button class="btn btn-link nav-link" onclick="logout()">
+                            <i class="fas fa-sign-out-alt me-1"></i>Logout
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Dashboard Section -->
+    <section class="dashboard-container">
+        <div class="container">
+            <!-- Welcome Card -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card welcome-card">
+                        <div class="card-body text-center p-5">
+                            <h1 class="display-4 mb-3">
+                                <i class="fas fa-tachometer-alt me-3"></i>
+                                Bem-vindo ao Dashboard
+                            </h1>
+                            <p class="lead mb-0" id="welcomeMessage">
+                                Você está logado no sistema Mottu Auth API
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="row mb-4">
+                <div class="col-md-3 mb-3">
+                    <div class="card stats-card text-center h-100">
+                        <div class="card-body">
+                            <i class="fas fa-user-check stats-icon mb-3"></i>
+                            <h5 class="card-title">Status</h5>
+                            <p class="card-text text-success">Ativo</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="card stats-card text-center h-100">
+                        <div class="card-body">
+                            <i class="fas fa-shield-alt stats-icon mb-3"></i>
+                            <h5 class="card-title">Perfil</h5>
+                            <p class="card-text" id="userProfile">Carregando...</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="card stats-card text-center h-100">
+                        <div class="card-body">
+                            <i class="fas fa-clock stats-icon mb-3"></i>
+                            <h5 class="card-title">Último Login</h5>
+                            <p class="card-text" id="lastLogin">Agora</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="card stats-card text-center h-100">
+                        <div class="card-body">
+                            <i class="fas fa-key stats-icon mb-3"></i>
+                            <h5 class="card-title">Token</h5>
+                            <p class="card-text text-info">JWT Ativo</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profile Section -->
+            <div class="row">
+                <div class="col-md-8 mb-4">
+                    <div class="profile-section">
+                        <h3 class="mb-4">
+                            <i class="fas fa-user me-2"></i>Informações do Perfil
+                        </h3>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">Nome Completo:</label>
+                                <p class="form-control-plaintext" id="userName">Carregando...</p>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">Email:</label>
+                                <p class="form-control-plaintext" id="userEmail">Carregando...</p>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">Perfil de Acesso:</label>
+                                <p class="form-control-plaintext" id="userRole">Carregando...</p>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">Status da Conta:</label>
+                                <p class="form-control-plaintext text-success">Ativa</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="fas fa-cog me-2"></i>Ações Rápidas
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-grid gap-2">
+                                <button class="btn btn-outline-primary" onclick="refreshProfile()">
+                                    <i class="fas fa-sync-alt me-2"></i>Atualizar Perfil
+                                </button>
+                                <button class="btn btn-outline-info" onclick="showTokenInfo()">
+                                    <i class="fas fa-key me-2"></i>Informações do Token
+                                </button>
+                                <button class="btn btn-outline-warning" onclick="changePassword()">
+                                    <i class="fas fa-lock me-2"></i>Alterar Senha
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>Mottu Auth API</h5>
+                    <p>Sistema de autenticação desenvolvido para Sprint 3 - Java Advanced FIAP</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <h5>Funcionalidades</h5>
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-check text-success me-2"></i>Login e Cadastro</li>
+                        <li><i class="fas fa-check text-success me-2"></i>Spring Security</li>
+                        <li><i class="fas fa-check text-success me-2"></i>JWT Authentication</li>
+                        <li><i class="fas fa-check text-success me-2"></i>Flyway Migrations</li>
+                    </ul>
+                </div>
+            </div>
+            <hr>
+            <div class="text-center">
+                <p>&copy; 2024 Mottu Auth API. Desenvolvido com Spring Boot e Thymeleaf.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Dashboard Script -->
+    <script>
+        // Verificar se o usuário está logado
+        function checkAuth() {
+            const token = localStorage.getItem('authToken');
+            const userData = localStorage.getItem('userData');
+            
+            if (!token || !userData) {
+                window.location.href = '/login';
+                return;
+            }
+            
+            // Carregar dados do usuário
+            loadUserData();
+        }
+        
+        // Carregar dados do usuário
+        function loadUserData() {
+            const userData = JSON.parse(localStorage.getItem('userData'));
+            
+            document.getElementById('welcomeMessage').textContent = `Bem-vindo, ${userData.nome}!`;
+            document.getElementById('userName').textContent = userData.nome;
+            document.getElementById('userEmail').textContent = userData.email;
+            document.getElementById('userProfile').textContent = userData.perfil;
+            document.getElementById('userRole').textContent = userData.perfil;
+            
+            // Mostrar link de admin se for administrador
+            if (userData.perfil === 'ADMIN') {
+                document.getElementById('adminLink').style.display = 'block';
+            }
+        }
+        
+        // Atualizar perfil
+        async function refreshProfile() {
+            const token = localStorage.getItem('authToken');
+            
+            try {
+                const response = await fetch('/api/auth/perfil', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                if (response.ok) {
+                    const userData = await response.json();
+                    localStorage.setItem('userData', JSON.stringify({
+                        nome: userData.nome,
+                        email: userData.email,
+                        perfil: userData.perfil
+                    }));
+                    loadUserData();
+                    alert('Perfil atualizado com sucesso!');
+                } else {
+                    alert('Erro ao atualizar perfil');
+                }
+            } catch (error) {
+                alert('Erro de conexão: ' + error.message);
+            }
+        }
+        
+        // Mostrar informações do token
+        function showTokenInfo() {
+            const token = localStorage.getItem('authToken');
+            if (token) {
+                const tokenInfo = {
+                    token: token.substring(0, 50) + '...',
+                    length: token.length,
+                    type: 'JWT'
+                };
+                alert(`Informações do Token:\nTipo: ${tokenInfo.type}\nTamanho: ${tokenInfo.length} caracteres\nInício: ${tokenInfo.token}`);
+            }
+        }
+        
+        // Alterar senha (placeholder)
+        function changePassword() {
+            alert('Funcionalidade de alteração de senha será implementada em breve!');
+        }
+        
+        // Logout
+        function logout() {
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('userData');
+            window.location.href = '/';
+        }
+        
+        // Verificar autenticação ao carregar a página
+        document.addEventListener('DOMContentLoaded', checkAuth);
+    </script>
+</body>
+</html>

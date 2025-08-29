@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Mottu Auth API</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <style>
+        .navbar-brand {
+            font-weight: bold;
+            color: #007bff !important;
+        }
+        .admin-container {
+            min-height: 80vh;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 40px 0;
+        }
+        .admin-header {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            color: white;
+            border: none;
+            border-radius: 20px;
+        }
+        .stats-card {
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border: none;
+            border-radius: 15px;
+            transition: transform 0.3s ease;
+        }
+        .stats-card:hover {
+            transform: translateY(-5px);
+        }
+        .stats-icon {
+            font-size: 2.5rem;
+        }
+        .stats-icon.users { color: #007bff; }
+        .stats-icon.admins { color: #dc3545; }
+        .stats-icon.active { color: #28a745; }
+        .stats-icon.inactive { color: #6c757d; }
+        .footer {
+            background-color: #343a40;
+            color: white;
+            padding: 20px 0;
+        }
+        .admin-section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .table-responsive {
+            border-radius: 10px;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-shield-alt me-2"></i>
+                Mottu Auth API
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">
+                            <i class="fas fa-home me-1"></i>Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/dashboard">
+                            <i class="fas fa-tachometer-alt me-1"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/admin">
+                            <i class="fas fa-cog me-1"></i>Admin
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <button class="btn btn-link nav-link" onclick="logout()">
+                            <i class="fas fa-sign-out-alt me-1"></i>Logout
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Admin Section -->
+    <section class="admin-container">
+        <div class="container">
+            <!-- Admin Header -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card admin-header">
+                        <div class="card-body text-center p-5">
+                            <h1 class="display-4 mb-3">
+                                <i class="fas fa-cog me-3"></i>
+                                Painel de Administração
+                            </h1>
+                            <p class="lead mb-0">
+                                Gerencie usuários e configurações do sistema
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="row mb-4">
+                <div class="col-md-3 mb-3">
+                    <div class="card stats-card text-center h-100">
+                        <div class="card-body">
+                            <i class="fas fa-users stats-icon users mb-3"></i>
+                            <h5 class="card-title">Total de Usuários</h5>
+                            <p class="card-text" id="totalUsers">Carregando...</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="card stats-card text-center h-100">
+                        <div class="card-body">
+                            <i class="fas fa-user-shield stats-icon admins mb-3"></i>
+                            <h5 class="card-title">Administradores</h5>
+                            <p class="card-text" id="totalAdmins">Carregando...</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="card stats-card text-center h-100">
+                        <div class="card-body">
+                            <i class="fas fa-user-check stats-icon active mb-3"></i>
+                            <h5 class="card-title">Usuários Ativos</h5>
+                            <p class="card-text" id="activeUsers">Carregando...</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="card stats-card text-center h-100">
+                        <div class="card-body">
+                            <i class="fas fa-user-times stats-icon inactive mb-3"></i>
+                            <h5 class="card-title">Usuários Inativos</h5>
+                            <p class="card-text" id="inactiveUsers">Carregando...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Admin Actions -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="admin-section">
+                        <h3 class="mb-4">
+                            <i class="fas fa-tools me-2"></i>Ações Administrativas
+                        </h3>
+                        <div class="row">
+                            <div class="col-md-3 mb-3">
+                                <button class="btn btn-primary w-100" onclick="refreshStats()">
+                                    <i class="fas fa-sync-alt me-2"></i>Atualizar Estatísticas
+                                </button>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <button class="btn btn-success w-100" onclick="exportUsers()">
+                                    <i class="fas fa-download me-2"></i>Exportar Usuários
+                                </button>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <button class="btn btn-warning w-100" onclick="showSystemInfo()">
+                                    <i class="fas fa-info-circle me-2"></i>Informações do Sistema
+                                </button>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <button class="btn btn-danger w-100" onclick="showDangerZone()">
+                                    <i class="fas fa-exclamation-triangle me-2"></i>Zona de Perigo
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Users Table -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="admin-section">
+                        <h3 class="mb-4">
+                            <i class="fas fa-users me-2"></i>Lista de Usuários
+                        </h3>
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Nome</th>
+                                        <th>Email</th>
+                                        <th>Perfil</th>
+                                        <th>Status</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="usersTableBody">
+                                    <tr>
+                                        <td colspan="6" class="text-center">Carregando usuários...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>Mottu Auth API</h5>
+                    <p>Sistema de autenticação desenvolvido para Sprint 3 - Java Advanced FIAP</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <h5>Funcionalidades</h5>
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-check text-success me-2"></i>Login e Cadastro</li>
+                        <li><i class="fas fa-check text-success me-2"></i>Spring Security</li>
+                        <li><i class="fas fa-check text-success me-2"></i>JWT Authentication</li>
+                        <li><i class="fas fa-check text-success me-2"></i>Flyway Migrations</li>
+                    </ul>
+                </div>
+            </div>
+            <hr>
+            <div class="text-center">
+                <p>&copy; 2024 Mottu Auth API. Desenvolvido com Spring Boot e Thymeleaf.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Admin Script -->
+    <script>
+        // Verificar se o usuário está logado e é admin
+        function checkAdminAuth() {
+            const token = localStorage.getItem('authToken');
+            const userData = localStorage.getItem('userData');
+            
+            if (!token || !userData) {
+                window.location.href = '/login';
+                return;
+            }
+            
+            const user = JSON.parse(userData);
+            if (user.perfil !== 'ADMIN') {
+                alert('Acesso negado. Apenas administradores podem acessar esta página.');
+                window.location.href = '/dashboard';
+                return;
+            }
+            
+            // Carregar dados administrativos
+            loadAdminData();
+        }
+        
+        // Carregar dados administrativos
+        async function loadAdminData() {
+            await Promise.all([
+                loadStats(),
+                loadUsers()
+            ]);
+        }
+        
+        // Carregar estatísticas
+        async function loadStats() {
+            // Simular carregamento de estatísticas
+            document.getElementById('totalUsers').textContent = '25';
+            document.getElementById('totalAdmins').textContent = '3';
+            document.getElementById('activeUsers').textContent = '22';
+            document.getElementById('inactiveUsers').textContent = '3';
+        }
+        
+        // Carregar lista de usuários
+        async function loadUsers() {
+            const users = [
+                { id: 1, nome: 'Administrador Sistema', email: 'admin@mottu.com', perfil: 'ADMIN', ativo: true },
+                { id: 2, nome: 'Usuário Teste', email: 'user@mottu.com', perfil: 'USUARIO', ativo: true },
+                { id: 3, nome: 'João Silva', email: 'joao@exemplo.com', perfil: 'USUARIO', ativo: true },
+                { id: 4, nome: 'Maria Santos', email: 'maria@exemplo.com', perfil: 'USUARIO', ativo: false }
+            ];
+            
+            const tbody = document.getElementById('usersTableBody');
+            tbody.innerHTML = '';
+            
+            users.forEach(user => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${user.id}</td>
+                    <td>${user.nome}</td>
+                    <td>${user.email}</td>
+                    <td>
+                        <span class="badge ${user.perfil === 'ADMIN' ? 'bg-danger' : 'bg-primary'}">
+                            ${user.perfil}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="badge ${user.ativo ? 'bg-success' : 'bg-secondary'}">
+                            ${user.ativo ? 'Ativo' : 'Inativo'}
+                        </span>
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-primary me-1" onclick="editUser(${user.id})">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-warning me-1" onclick="toggleUserStatus(${user.id})">
+                            <i class="fas fa-power-off"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger" onclick="deleteUser(${user.id})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+        
+        // Atualizar estatísticas
+        function refreshStats() {
+            loadStats();
+            alert('Estatísticas atualizadas!');
+        }
+        
+        // Exportar usuários
+        function exportUsers() {
+            alert('Funcionalidade de exportação será implementada em breve!');
+        }
+        
+        // Mostrar informações do sistema
+        function showSystemInfo() {
+            const systemInfo = {
+                'Versão': '1.0.0',
+                'Spring Boot': '3.2.0',
+                'Java': '17',
+                'Database': 'Oracle',
+                'Flyway': '10.7.1',
+                'JWT': '0.12.3'
+            };
+            
+            let infoText = 'Informações do Sistema:\n\n';
+            for (const [key, value] of Object.entries(systemInfo)) {
+                infoText += `${key}: ${value}\n`;
+            }
+            
+            alert(infoText);
+        }
+        
+        // Mostrar zona de perigo
+        function showDangerZone() {
+            alert('Zona de Perigo - Funcionalidades críticas do sistema:\n\n' +
+                  '• Exclusão em massa de usuários\n' +
+                  '• Reset de senhas\n' +
+                  '• Manutenção do sistema\n' +
+                  '• Logs de auditoria');
+        }
+        
+        // Editar usuário
+        function editUser(userId) {
+            alert(`Editando usuário ID: ${userId}\n\nFuncionalidade será implementada em breve!`);
+        }
+        
+        // Alternar status do usuário
+        function toggleUserStatus(userId) {
+            if (confirm('Deseja alterar o status deste usuário?')) {
+                alert(`Status do usuário ID: ${userId} alterado!\n\nFuncionalidade será implementada em breve!`);
+            }
+        }
+        
+        // Excluir usuário
+        function deleteUser(userId) {
+            if (confirm('Tem certeza que deseja excluir este usuário? Esta ação não pode ser desfeita.')) {
+                alert(`Usuário ID: ${userId} excluído!\n\nFuncionalidade será implementada em breve!`);
+            }
+        }
+        
+        // Logout
+        function logout() {
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('userData');
+            window.location.href = '/';
+        }
+        
+        // Verificar autenticação ao carregar a página
+        document.addEventListener('DOMContentLoaded', checkAdminAuth);
+    </script>
+</body>
+</html>

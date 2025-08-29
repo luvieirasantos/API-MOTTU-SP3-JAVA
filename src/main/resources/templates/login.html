@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Mottu Auth API</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <style>
+        .navbar-brand {
+            font-weight: bold;
+            color: #007bff !important;
+        }
+        .login-container {
+            min-height: 80vh;
+            display: flex;
+            align-items: center;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+        .login-card {
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border: none;
+            border-radius: 20px;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 25px;
+            padding: 12px 40px;
+            font-weight: 600;
+        }
+        .form-control {
+            border-radius: 10px;
+            border: 2px solid #e9ecef;
+            padding: 12px 15px;
+        }
+        .form-control:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        }
+        .footer {
+            background-color: #343a40;
+            color: white;
+            padding: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-shield-alt me-2"></i>
+                Mottu Auth API
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">
+                            <i class="fas fa-home me-1"></i>Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/login">
+                            <i class="fas fa-sign-in-alt me-1"></i>Login
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/cadastro">
+                            <i class="fas fa-user-plus me-1"></i>Cadastro
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Login Section -->
+    <section class="login-container">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-6 col-lg-5">
+                    <div class="card login-card">
+                        <div class="card-body p-5">
+                            <div class="text-center mb-4">
+                                <i class="fas fa-sign-in-alt fa-3x text-primary mb-3"></i>
+                                <h2 class="card-title">Login</h2>
+                                <p class="text-muted">Entre com suas credenciais</p>
+                            </div>
+                            
+                            <form id="loginForm">
+                                <div class="mb-3">
+                                    <label for="email" class="form-label">
+                                        <i class="fas fa-envelope me-2"></i>Email
+                                    </label>
+                                    <input type="email" class="form-control" id="email" name="email" required>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="senha" class="form-label">
+                                        <i class="fas fa-lock me-2"></i>Senha
+                                    </label>
+                                    <input type="password" class="form-control" id="senha" name="senha" required>
+                                </div>
+                                
+                                <div class="d-grid mb-3">
+                                    <button type="submit" class="btn btn-primary btn-lg">
+                                        <i class="fas fa-sign-in-alt me-2"></i>Entrar
+                                    </button>
+                                </div>
+                                
+                                <div class="text-center">
+                                    <p class="mb-0">Não tem uma conta? 
+                                        <a href="/cadastro" class="text-decoration-none">Cadastre-se</a>
+                                    </p>
+                                </div>
+                            </form>
+                            
+                            <!-- Alert para mensagens -->
+                            <div id="alertContainer"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Credenciais de teste -->
+                    <div class="card mt-3">
+                        <div class="card-body">
+                            <h6 class="card-title">
+                                <i class="fas fa-info-circle me-2"></i>Credenciais de Teste
+                            </h6>
+                            <div class="row">
+                                <div class="col-6">
+                                    <small class="text-muted">Admin:</small><br>
+                                    <small><strong>admin@mottu.com</strong></small><br>
+                                    <small><strong>admin123</strong></small>
+                                </div>
+                                <div class="col-6">
+                                    <small class="text-muted">Usuário:</small><br>
+                                    <small><strong>user@mottu.com</strong></small><br>
+                                    <small><strong>user123</strong></small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>Mottu Auth API</h5>
+                    <p>Sistema de autenticação desenvolvido para Sprint 3 - Java Advanced FIAP</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <h5>Funcionalidades</h5>
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-check text-success me-2"></i>Login e Cadastro</li>
+                        <li><i class="fas fa-check text-success me-2"></i>Spring Security</li>
+                        <li><i class="fas fa-check text-success me-2"></i>JWT Authentication</li>
+                        <li><i class="fas fa-check text-success me-2"></i>Flyway Migrations</li>
+                    </ul>
+                </div>
+            </div>
+            <hr>
+            <div class="text-center">
+                <p>&copy; 2024 Mottu Auth API. Desenvolvido com Spring Boot e Thymeleaf.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Login Script -->
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const senha = document.getElementById('senha').value;
+            
+            try {
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email, senha })
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    
+                    // Salvar token no localStorage
+                    localStorage.setItem('authToken', data.token);
+                    localStorage.setItem('userData', JSON.stringify({
+                        nome: data.nome,
+                        email: data.email,
+                        perfil: data.perfil
+                    }));
+                    
+                    // Mostrar mensagem de sucesso
+                    showAlert('Login realizado com sucesso! Redirecionando...', 'success');
+                    
+                    // Redirecionar baseado no perfil
+                    setTimeout(() => {
+                        if (data.perfil === 'ADMIN') {
+                            window.location.href = '/admin';
+                        } else {
+                            window.location.href = '/dashboard';
+                        }
+                    }, 1500);
+                    
+                } else {
+                    const errorData = await response.text();
+                    showAlert('Erro no login: ' + errorData, 'danger');
+                }
+                
+            } catch (error) {
+                showAlert('Erro de conexão: ' + error.message, 'danger');
+            }
+        });
+        
+        function showAlert(message, type) {
+            const alertContainer = document.getElementById('alertContainer');
+            alertContainer.innerHTML = `
+                <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+                    ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>
