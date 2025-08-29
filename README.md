@@ -375,13 +375,68 @@ logging:
    - Implementar alertas
    - Monitorar métricas de uso
 
-### Docker (Futuro)
+### Docker
 ```dockerfile
-FROM openjdk:17-jre-slim
-COPY target/mottu-auth-api-1.0.0.jar app.jar
+# Multi-stage build para otimizar o tamanho da imagem final
+FROM maven:3.9.6-eclipse-temurin-17 AS build
+WORKDIR /app
+COPY pom.xml .mvn .mvn mvnw .
+RUN mvn dependency:go-offline -B
+COPY src ./src
+RUN mvn clean package -DskipTests
+
+FROM eclipse-temurin:17-jre-alpine
+RUN addgroup -g 1001 -S appgroup && \
+    adduser -u 1001 -S appuser -G appgroup
+WORKDIR /app
+RUN apk add --no-cache libc6-compat
+COPY --from=build /app/target/mottu-auth-api-1.0.0.jar app.jar
+RUN mkdir -p /app/logs && chown -R appuser:appgroup /app
+USER appuser
 EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "/app.jar"]
+ENV JAVA_OPTS="-Xms512m -Xmx1024m -XX:+UseG1GC -XX:+UseContainerSupport"
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]
 ```
+
+#### Executar com Docker
+```bash
+# Build da imagem
+docker build -t mottu-auth-api .
+
+# Executar container
+docker run -p 8080:8080 mottu-auth-api
+
+# Com docker-compose
+docker-compose up -d
+```
+
+## 🚀 Deploy e Produção
+
+### Deploy no Render
+Para fazer deploy da aplicação no Render (plataforma de cloud gratuita):
+
+1. **Conecte seu repositório** no Render
+2. **Configure como Web Service** com runtime Docker
+3. **Configure variáveis de ambiente** (banco, JWT, etc.)
+4. **Deploy automático** a cada push
+
+📖 **Guia completo**: Consulte [RENDER_DEPLOY.md](./RENDER_DEPLOY.md)
+
+### Deploy Local com Docker
+```bash
+# Build e execução
+docker build -t mottu-auth-api .
+docker run -p 8080:8080 mottu-auth-api
+
+# Com docker-compose (recomendado)
+docker-compose up -d
+```
+
+### Configurações de Produção
+- **Perfil**: `prod` (application-prod.yml)
+- **Logging**: Otimizado para produção
+- **Health Checks**: Endpoints de monitoramento
+- **Segurança**: Usuário não-root, HTTPS
 
 ## 📚 Documentação Adicional
 
