@@ -1,71 +1,29 @@
 -- V1__Criar_Tabela_Usuarios.sql
 -- Criação da tabela de usuários do sistema Mottu
 
-BEGIN
-    EXECUTE IMMEDIATE 'CREATE TABLE MOTTU_USUARIOS_SISTEMA (
-        ID_USUARIO NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-        NOME_COMPLETO VARCHAR2(100) NOT NULL,
-        EMAIL_USUARIO VARCHAR2(100) NOT NULL UNIQUE,
-        SENHA_CRIPTOGRAFADA VARCHAR2(255) NOT NULL,
-        PERFIL_ACESSO VARCHAR2(20) DEFAULT ''USUARIO'' NOT NULL,
-        ATIVO NUMBER(1) DEFAULT 1 NOT NULL,
-        DATA_CRIACAO TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-        DATA_ATUALIZACAO TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
-    )';
-EXCEPTION
-    WHEN OTHERS THEN
-        IF SQLCODE = -955 THEN
-            NULL; -- Table already exists, ignore error
-        ELSE
-            RAISE;
-        END IF;
-END;
-/
+CREATE TABLE IF NOT EXISTS mottu_usuarios_sistema (
+    id_usuario SERIAL PRIMARY KEY,
+    nome_completo VARCHAR(100) NOT NULL,
+    email_usuario VARCHAR(100) NOT NULL UNIQUE,
+    senha_criptografada VARCHAR(255) NOT NULL,
+    perfil_acesso VARCHAR(20) DEFAULT 'USUARIO' NOT NULL,
+    ativo BOOLEAN DEFAULT TRUE NOT NULL,
+    data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    data_atualizacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
 
 -- Índices para melhorar performance
-BEGIN
-    EXECUTE IMMEDIATE 'CREATE INDEX IDX_MOTTU_USUARIOS_EMAIL ON MOTTU_USUARIOS_SISTEMA(EMAIL_USUARIO)';
-EXCEPTION
-    WHEN OTHERS THEN
-        IF SQLCODE = -1408 THEN
-            NULL; -- Index already exists, ignore error
-        ELSE
-            RAISE;
-        END IF;
-END;
-/
-
-BEGIN
-    EXECUTE IMMEDIATE 'CREATE INDEX IDX_MOTTU_USUARIOS_ATIVO ON MOTTU_USUARIOS_SISTEMA(ATIVO)';
-EXCEPTION
-    WHEN OTHERS THEN
-        IF SQLCODE = -1408 THEN
-            NULL; -- Index already exists, ignore error
-        ELSE
-            RAISE;
-        END IF;
-END;
-/
-
-BEGIN
-    EXECUTE IMMEDIATE 'CREATE INDEX IDX_MOTTU_USUARIOS_PERFIL ON MOTTU_USUARIOS_SISTEMA(PERFIL_ACESSO)';
-EXCEPTION
-    WHEN OTHERS THEN
-        IF SQLCODE = -1408 THEN
-            NULL; -- Index already exists, ignore error
-        ELSE
-            RAISE;
-        END IF;
-END;
-/
+CREATE INDEX IF NOT EXISTS idx_mottu_usuarios_email ON mottu_usuarios_sistema(email_usuario);
+CREATE INDEX IF NOT EXISTS idx_mottu_usuarios_ativo ON mottu_usuarios_sistema(ativo);
+CREATE INDEX IF NOT EXISTS idx_mottu_usuarios_perfil ON mottu_usuarios_sistema(perfil_acesso);
 
 -- Comentários para documentação
-COMMENT ON TABLE MOTTU_USUARIOS_SISTEMA IS 'Tabela para armazenar usuários do sistema Mottu';
-COMMENT ON COLUMN MOTTU_USUARIOS_SISTEMA.ID_USUARIO IS 'Identificador único do usuário';
-COMMENT ON COLUMN MOTTU_USUARIOS_SISTEMA.NOME_COMPLETO IS 'Nome completo do usuário';
-COMMENT ON COLUMN MOTTU_USUARIOS_SISTEMA.EMAIL_USUARIO IS 'Email único do usuário para login';
-COMMENT ON COLUMN MOTTU_USUARIOS_SISTEMA.SENHA_CRIPTOGRAFADA IS 'Senha criptografada do usuário';
-COMMENT ON COLUMN MOTTU_USUARIOS_SISTEMA.PERFIL_ACESSO IS 'Perfil de acesso (ADMIN ou USUARIO)';
-COMMENT ON COLUMN MOTTU_USUARIOS_SISTEMA.ATIVO IS 'Flag indicando se o usuário está ativo (1) ou inativo (0)';
-COMMENT ON COLUMN MOTTU_USUARIOS_SISTEMA.DATA_CRIACAO IS 'Data e hora de criação do registro';
-COMMENT ON COLUMN MOTTU_USUARIOS_SISTEMA.DATA_ATUALIZACAO IS 'Data e hora da última atualização';
+COMMENT ON TABLE mottu_usuarios_sistema IS 'Tabela para armazenar usuários do sistema Mottu';
+COMMENT ON COLUMN mottu_usuarios_sistema.id_usuario IS 'Identificador único do usuário';
+COMMENT ON COLUMN mottu_usuarios_sistema.nome_completo IS 'Nome completo do usuário';
+COMMENT ON COLUMN mottu_usuarios_sistema.email_usuario IS 'Email único do usuário para login';
+COMMENT ON COLUMN mottu_usuarios_sistema.senha_criptografada IS 'Senha criptografada do usuário';
+COMMENT ON COLUMN mottu_usuarios_sistema.perfil_acesso IS 'Perfil de acesso (ADMIN ou USUARIO)';
+COMMENT ON COLUMN mottu_usuarios_sistema.ativo IS 'Flag indicando se o usuário está ativo ou inativo';
+COMMENT ON COLUMN mottu_usuarios_sistema.data_criacao IS 'Data e hora de criação do registro';
+COMMENT ON COLUMN mottu_usuarios_sistema.data_atualizacao IS 'Data e hora da última atualização';

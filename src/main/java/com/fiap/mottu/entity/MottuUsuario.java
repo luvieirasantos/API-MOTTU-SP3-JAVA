@@ -32,7 +32,7 @@ import jakarta.validation.constraints.Size;
  * - implements UserDetails: Interface obrigatória para Spring Security
  */
 @Entity
-@Table(name = "MOTTU_USUARIOS_SISTEMA")
+@Table(name = "mottu_usuarios_sistema")
 public class MottuUsuario implements UserDetails {
 
     /**
@@ -43,7 +43,7 @@ public class MottuUsuario implements UserDetails {
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ID_USUARIO")
+    @Column(name = "id_usuario")
     private Long id;
 
     /**
@@ -54,7 +54,7 @@ public class MottuUsuario implements UserDetails {
      */
     @NotBlank(message = "Nome é obrigatório")
     @Size(min = 2, max = 100, message = "Nome deve ter entre 2 e 100 caracteres")
-    @Column(name = "NOME_COMPLETO", nullable = false, length = 100)
+    @Column(name = "nome_completo", nullable = false, length = 100)
     private String nome;
 
     /**
@@ -65,7 +65,7 @@ public class MottuUsuario implements UserDetails {
      */
     @NotBlank(message = "Email é obrigatório")
     @Email(message = "Email deve ser válido")
-    @Column(name = "EMAIL_USUARIO", nullable = false, unique = true, length = 100)
+    @Column(name = "email_usuario", nullable = false, unique = true, length = 100)
     private String email;
 
     /**
@@ -76,7 +76,7 @@ public class MottuUsuario implements UserDetails {
      */
     @NotBlank(message = "Senha é obrigatória")
     @Size(min = 6, message = "Senha deve ter pelo menos 6 caracteres")
-    @Column(name = "SENHA_CRIPTOGRAFADA", nullable = false)
+    @Column(name = "senha_criptografada", nullable = false)
     private String senha;
 
     /**
@@ -87,7 +87,7 @@ public class MottuUsuario implements UserDetails {
      * - Define as permissões e acesso do usuário no sistema
      */
     @Enumerated(EnumType.STRING)
-    @Column(name = "PERFIL_ACESSO", nullable = false)
+    @Column(name = "perfil_acesso", nullable = false)
     private PerfilUsuario perfil = PerfilUsuario.USUARIO;
 
     /**
@@ -97,7 +97,7 @@ public class MottuUsuario implements UserDetails {
      * - Usado para desativar contas sem deletá-las
      * - Importante para Spring Security (conta habilitada/desabilitada)
      */
-    @Column(name = "ATIVO", nullable = false)
+    @Column(name = "ativo", nullable = false)
     private Boolean ativo = true;
 
     // ========================================

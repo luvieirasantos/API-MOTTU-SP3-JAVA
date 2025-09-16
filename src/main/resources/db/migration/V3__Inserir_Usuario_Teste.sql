@@ -2,16 +2,16 @@
 -- Inserção de usuário de teste para demonstração
 -- Senha: user123 (criptografada com BCrypt)
 
-INSERT INTO MOTTU_USUARIOS_SISTEMA (
-    NOME_COMPLETO, 
-    EMAIL_USUARIO, 
-    SENHA_CRIPTOGRAFADA, 
-    PERFIL_ACESSO, 
-    ATIVO
+INSERT INTO mottu_usuarios_sistema (
+    nome_completo,
+    email_usuario,
+    senha_criptografada,
+    perfil_acesso,
+    ativo
 ) VALUES (
     'Usuário Teste',
     'user@mottu.com',
     '$2a$10$8.UnVuG9HHgffUDAlk8qfOuVGkqRzgVymGe07xd00DMxs.AQubh4a',
     'USUARIO',
-    1
+    TRUE
 );
