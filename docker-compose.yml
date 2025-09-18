@@ -10,7 +10,7 @@ services:
       - "8080:8080"
     environment:
       # Configurações do banco de dados
-      DATABASE_URL: jdbc:oracle:thin:@oracle.fiap.com.br:1521:ORCL
+      DATABASE_URL: jdbc:oracle:thin:@//oracle.fiap.com.br:1521/ORCL
       DATABASE_USERNAME: rm558935
       DATABASE_PASSWORD: 310805
 
