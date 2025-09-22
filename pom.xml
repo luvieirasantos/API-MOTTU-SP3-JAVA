@@ -124,7 +124,7 @@
                 <artifactId>flyway-maven-plugin</artifactId>
                 <version>${flyway.version}</version>
                 <configuration>
-                    <url>${DATABASE_URL}</url>
+                    <url>jdbc:${DATABASE_URL}</url>
                     <user>${DATABASE_USERNAME}</user>
                     <password>${DATABASE_PASSWORD}</password>
                 </configuration>
