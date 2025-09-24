@@ -1,5 +1,7 @@
 package com.fiap.mottu.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -129,6 +131,58 @@ public class MottuUsuarioService implements UserDetailsService {
 
         // PERSISTÊNCIA: Salva usuário no banco
         return usuarioRepository.save(usuario);
+    }
+
+    // ===== CRUD Admin =====
+    public List<MottuUsuario> listarTodos() {
+        return usuarioRepository.findAll();
+    }
+
+    public MottuUsuario buscarPorId(Long id) {
+        return usuarioRepository.findById(id).orElse(null);
+    }
+
+    public MottuUsuario criarUsuarioAdmin(MottuUsuario usuario) {
+        if (usuarioRepository.existsByEmail(usuario.getEmail())) {
+            throw new RuntimeException("Email já cadastrado: " + usuario.getEmail());
+        }
+        usuario.setSenha(passwordEncoder.encode(usuario.getSenha()));
+        if (usuario.getAtivo() == null) {
+            usuario.setAtivo(true);
+        }
+        if (usuario.getPerfil() == null) {
+            usuario.setPerfil(PerfilUsuario.USUARIO);
+        }
+        return usuarioRepository.save(usuario);
+    }
+
+    public void atualizarDadosBasicos(Long id, String nome, String email, PerfilUsuario perfil, Boolean ativo) {
+        MottuUsuario existente = usuarioRepository.findById(id).orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+        existente.setNome(nome);
+        existente.setEmail(email);
+        existente.setPerfil(perfil);
+        existente.setAtivo(ativo != null ? ativo : existente.getAtivo());
+        usuarioRepository.save(existente);
+    }
+
+    public void atualizarComSenha(Long id, String nome, String email, PerfilUsuario perfil, Boolean ativo, String novaSenha) {
+        MottuUsuario existente = usuarioRepository.findById(id).orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+        existente.setNome(nome);
+        existente.setEmail(email);
+        existente.setPerfil(perfil);
+        existente.setAtivo(ativo != null ? ativo : existente.getAtivo());
+        existente.setSenha(passwordEncoder.encode(novaSenha));
+        usuarioRepository.save(existente);
+    }
+
+    public void alternarStatusAtivo(Long id) {
+        MottuUsuario existente = usuarioRepository.findById(id).orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+        existente.setAtivo(!Boolean.TRUE.equals(existente.getAtivo()));
+        usuarioRepository.save(existente);
+    }
+
+    public void excluirPorId(Long id) {
+        usuarioRepository.deleteById(id);
     }
 
     /**

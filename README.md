@@ -1,5 +1,13 @@
 # 🚀 Mottu Auth API - Sistema de Autenticação
 
+## Participantes
+Lu Vieira 558935
+Melissa Pereira 555656
+Diego Furigo do Nascimento 558755
+
+## Video no youtube
+https://youtu.be/x_vQFFozHxc
+
 ## 📋 Descrição do Projeto
 
 **Mottu Auth API** é uma aplicação web completa desenvolvida em **Spring Boot** para demonstrar um sistema robusto de autenticação e autorização. Este projeto foi desenvolvido para a **Sprint 3 - Java Advanced** da FIAP, implementando as melhores práticas de desenvolvimento e segurança.
@@ -81,11 +89,12 @@ src/
 
 ### Pré-requisitos
 
-- **Java 17+**
-- **Maven 3.9+**
-- **Acesso ao Oracle FIAP** (servidor remoto)
+- **Java 17+** (recomendado: OpenJDK 17 ou superior)
+- **Maven 3.9+** (para build e gerenciamento de dependências)
+- **Acesso ao Oracle Database FIAP** (servidor remoto configurado)
 - **Git** para clonar o repositório
-- **(Opcional) Docker** apenas para a aplicação (não subiremos Oracle local)
+- **(Opcional) Docker** para containerização e deploy
+- **(Opcional) IDE** IntelliJ IDEA, Eclipse ou VS Code com extensões Java
 
 ### 1. Clone o Repositório
 
@@ -96,40 +105,52 @@ cd Sprint3-Java
 
 ### 2. Configuração da Aplicação
 
-#### 2.1 Configuração de Ambiente
-1. Duplique o arquivo `.env.example` para `.env`:
-   ```bash
-   cp .env.example .env
-   ```
-
-2. Preencha o arquivo `.env` com suas credenciais locais 
-   DB_URL=jdbc:oracle:thin:@//oracle.fiap.com.br:1521/ORCL
-   DB_USERNAME=rm558935
-   DB_PASSWORD=310805
-   JWT_SECRET=troque_esta_chave
-   SPRING_PROFILES_ACTIVE=prod
-   ```
-
-**⚠️ Importante**: Nunca commite o arquivo `.env` no repositório público para evitar vazamento de credenciais.
-
-#### 2.2 Acesso ao Oracle FIAP
-A aplicação está configurada para usar o banco Oracle da FIAP:
+#### 2.1 Configuração do Banco de Dados
+A aplicação está pré-configurada para usar o banco Oracle da FIAP:
 - **URL**: `jdbc:oracle:thin:@//oracle.fiap.com.br:1521/ORCL`
 - **Usuário**: `rm558935`
 - **Senha**: `310805`
 
+**⚠️ Importante**: As credenciais estão hardcoded no código para fins educacionais. Em produção, considere usar variáveis de ambiente.
+
+#### 2.2 Configuração JWT (Opcional)
+Para alterar a chave secreta JWT, modifique no arquivo `application.yml`:
+```yaml
+jwt:
+  secret: sua_chave_secreta_muito_segura_aqui
+```
+
+**Recomendação**: Use uma chave forte com pelo menos 256 bits.
+
 ### 3. Executar a Aplicação
 
-#### 3.1 Via Maven
+#### 3.1 Via Maven (Recomendado)
 ```bash
-mvn clean install
+# Compilar e executar em um comando
 mvn spring-boot:run
+
+# Ou executar pulando testes (mais rápido para desenvolvimento)
+mvn spring-boot:run -DskipTests
 ```
 
 #### 3.2 Via IDE
-- Abra o projeto no IntelliJ IDEA ou Eclipse
-- Execute a classe `MottuAuthApplication`
+- Abra o projeto no IntelliJ IDEA, Eclipse ou VS Code
+- Execute a classe `MottuAuthApplication.java` localizada em `src/main/java/com/fiap/mottu/`
 - A aplicação estará disponível em `http://localhost:8080`
+
+#### 3.3 Via Docker
+```bash
+# Build da imagem
+docker build -t mottu-auth-api .
+
+# Executar container
+docker run -p 8080:8080 mottu-auth-api
+
+# Ou usar docker-compose (recomendado para desenvolvimento)
+docker-compose up -d
+```
+
+**Nota**: O Docker está configurado para usar as mesmas credenciais hardcoded do banco Oracle FIAP.
 
 ### 4. Acessar a Aplicação
 
@@ -264,17 +285,17 @@ mvn flyway:clean
 ```yaml
 spring:
   profiles:
-    active: ${SPRING_PROFILES_ACTIVE}
+    active: ${SPRING_PROFILES_ACTIVE:prod}
   datasource:
-    url: ${DB_URL}
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
+    url: jdbc:oracle:thin:@//oracle.fiap.com.br:1521/ORCL
+    username: rm558935
+    password: 310805
     driver-class-name: oracle.jdbc.OracleDriver
 
   jpa:
     database-platform: org.hibernate.dialect.OracleDialect
     hibernate:
-      ddl-auto: validate
+      ddl-auto: none
     properties:
       hibernate:
         format_sql: true
@@ -296,7 +317,7 @@ logging:
     org.hibernate.orm.jdbc.bind: info
 
 jwt:
-  secret: ${JWT_SECRET}
+  secret: ${JWT_SECRET:c1f6b9c2a7d94e04b0a1f9d2c3e4f5a6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2}
   expiration: 5184000000 # 2 meses em milissegundos (60 dias)
 
 management:
@@ -308,6 +329,8 @@ management:
     health:
       show-details: always
 ```
+
+**Nota**: As configurações de banco e JWT estão hardcoded para fins educacionais. Para produção, considere usar variáveis de ambiente.
 
 ### Logs
 - **Spring Security**: DEBUG
@@ -470,9 +493,26 @@ docker-compose up -d
 ## 📚 Documentação Adicional
 
 ### APIs REST
-- **POST** `/api/auth/cadastro` - Cadastro de usuário
-- **POST** `/api/auth/login` - Autenticação
-- **GET** `/api/auth/perfil` - Perfil do usuário (autenticado)
+
+#### Endpoints de Autenticação
+- **POST** `/api/auth/cadastro` - Cadastro de novo usuário
+  - **Body**: `{"nome": "string", "email": "string", "senha": "string"}`
+  - **Resposta**: `{"token": "jwt", "nome": "string", "email": "string", "perfil": "ADMIN|USUARIO"}`
+- **POST** `/api/auth/login` - Autenticação de usuário
+  - **Body**: `{"email": "string", "senha": "string"}`
+  - **Resposta**: `{"token": "jwt", "nome": "string", "email": "string", "perfil": "ADMIN|USUARIO"}`
+- **GET** `/api/auth/perfil` - Obter perfil do usuário autenticado
+  - **Header**: `Authorization: Bearer {token}`
+  - **Resposta**: Dados completos do usuário
+
+#### Endpoints Administrativos (requer perfil ADMIN)
+- **GET** `/admin/users` - Listar todos os usuários
+- **GET** `/admin/users/new` - Formulário de criação de usuário
+- **POST** `/admin/users` - Criar novo usuário
+- **GET** `/admin/users/{id}/edit` - Formulário de edição
+- **POST** `/admin/users/{id}` - Atualizar usuário
+- **POST** `/admin/users/{id}/delete` - Excluir usuário
+- **POST** `/admin/users/{id}/toggle` - Ativar/desativar usuário
 
 ### Segurança
 - **JWT**: Implementação completa
