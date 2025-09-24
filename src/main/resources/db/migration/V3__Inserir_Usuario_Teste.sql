@@ -13,5 +13,5 @@ INSERT INTO mottu_usuarios_sistema (
     'user@mottu.com',
     '$2a$10$8.UnVuG9HHgffUDAlk8qfOuVGkqRzgVymGe07xd00DMxs.AQubh4a',
     'USUARIO',
-    TRUE
+    1
 );

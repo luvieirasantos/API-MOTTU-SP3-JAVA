@@ -1,18 +1,14 @@
 -- V4__Criar_Trigger_Atualizacao.sql
--- Criação de função e trigger para atualizar automaticamente a data de modificação
+-- Criação de trigger para atualizar automaticamente a data de modificação
 
-CREATE OR REPLACE FUNCTION update_data_atualizacao()
-RETURNS TRIGGER AS $$
+-- Trigger para updated_at (já criado em V1, mas mantido para compatibilidade)
+CREATE OR REPLACE TRIGGER TRG_MOTTU_USUARIOS_BU
+BEFORE UPDATE ON mottu_usuarios_sistema
+FOR EACH ROW
 BEGIN
-    NEW.data_atualizacao = CURRENT_TIMESTAMP;
-    RETURN NEW;
+  :NEW.data_atualizacao := SYSTIMESTAMP;
 END;
-$$ LANGUAGE plpgsql;
-
-CREATE TRIGGER trg_mottu_usuarios_update
-    BEFORE UPDATE ON mottu_usuarios_sistema
-    FOR EACH ROW
-    EXECUTE FUNCTION update_data_atualizacao();
+/
 
 -- Comentário do trigger
-COMMENT ON TRIGGER trg_mottu_usuarios_update ON mottu_usuarios_sistema IS 'Trigger para atualizar automaticamente a data de modificação dos usuários';
+COMMENT ON TRIGGER TRG_MOTTU_USUARIOS_BU ON mottu_usuarios_sistema IS 'Trigger para atualizar automaticamente a data de modificação dos usuários';

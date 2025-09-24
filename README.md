@@ -81,10 +81,11 @@ src/
 
 ### Pré-requisitos
 
-- **Java 17** ou superior
-- **Maven 3.6+**
-- **Oracle Database 19.3** (ou superior)
+- **Java 17+**
+- **Maven 3.9+**
+- **Acesso ao Oracle FIAP** (servidor remoto)
 - **Git** para clonar o repositório
+- **(Opcional) Docker** apenas para a aplicação (não subiremos Oracle local)
 
 ### 1. Clone o Repositório
 
@@ -93,27 +94,29 @@ git clone https://github.com/seu-usuario/Sprint3-Java.git
 cd Sprint3-Java
 ```
 
-### 2. Configuração do Banco de Dados
+### 2. Configuração da Aplicação
 
-#### 2.1 Acesso ao Oracle FIAP
+#### 2.1 Configuração de Ambiente
+1. Duplique o arquivo `.env.example` para `.env`:
+   ```bash
+   cp .env.example .env
+   ```
+
+2. Preencha o arquivo `.env` com suas credenciais locais 
+   DB_URL=jdbc:oracle:thin:@//oracle.fiap.com.br:1521/ORCL
+   DB_USERNAME=rm558935
+   DB_PASSWORD=310805
+   JWT_SECRET=troque_esta_chave
+   SPRING_PROFILES_ACTIVE=prod
+   ```
+
+**⚠️ Importante**: Nunca commite o arquivo `.env` no repositório público para evitar vazamento de credenciais.
+
+#### 2.2 Acesso ao Oracle FIAP
 A aplicação está configurada para usar o banco Oracle da FIAP:
-- **Host**: `oracle.fiap.com.br`
-- **Porta**: `1521`
-- **SID**: `ORCL`
+- **URL**: `jdbc:oracle:thin:@//oracle.fiap.com.br:1521/ORCL`
 - **Usuário**: `rm558935`
 - **Senha**: `310805`
-
-#### 2.2 Configuração Local (Opcional)
-Se quiser usar um banco local, edite o `application.yml`:
-
-```yaml
-spring:
-  datasource:
-    url: jdbc:oracle:thin:@localhost:1521:XE
-    username: seu_usuario
-    password: sua_senha
-    driver-class-name: oracle.jdbc.OracleDriver
-```
 
 ### 3. Executar a Aplicação
 
@@ -200,6 +203,8 @@ mvn spring-boot:run
 
 ### Executar Migrações
 
+As migrações são executadas automaticamente na inicialização da aplicação. Para controle manual:
+
 ```bash
 # Verificar status das migrações
 mvn flyway:info
@@ -258,26 +263,50 @@ mvn flyway:clean
 ### application.yml
 ```yaml
 spring:
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE}
   datasource:
-    url: jdbc:oracle:thin:@oracle.fiap.com.br:1521:ORCL
-    username: 
-    password: 
-  
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: oracle.jdbc.OracleDriver
+
   jpa:
+    database-platform: org.hibernate.dialect.OracleDialect
     hibernate:
       ddl-auto: validate
-    show-sql: true
-  
+    properties:
+      hibernate:
+        format_sql: true
+        jdbc:
+          lob:
+            non_contextual_creation: true
   flyway:
-    enabled: false  # Temporariamente desabilitado
+    enabled: true
+    locations: classpath:db/migration
+    validate-on-migrate: true
     baseline-on-migrate: true
 
 server:
   port: 8080
 
+logging:
+  level:
+    org.hibernate.SQL: info
+    org.hibernate.orm.jdbc.bind: info
+
 jwt:
-  secret: mottuSecretKey2024Sprint3JavaAdvancedFIAP
-  expiration: 5184000000  # 2 meses (60 dias)
+  secret: ${JWT_SECRET}
+  expiration: 5184000000 # 2 meses em milissegundos (60 dias)
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: always
 ```
 
 ### Logs

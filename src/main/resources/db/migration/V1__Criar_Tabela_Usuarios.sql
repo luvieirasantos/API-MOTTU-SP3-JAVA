@@ -1,21 +1,44 @@
 -- V1__Criar_Tabela_Usuarios.sql
 -- Criação da tabela de usuários do sistema Mottu
 
-CREATE TABLE IF NOT EXISTS mottu_usuarios_sistema (
-    id_usuario SERIAL PRIMARY KEY,
-    nome_completo VARCHAR(100) NOT NULL,
-    email_usuario VARCHAR(100) NOT NULL UNIQUE,
-    senha_criptografada VARCHAR(255) NOT NULL,
-    perfil_acesso VARCHAR(20) DEFAULT 'USUARIO' NOT NULL,
-    ativo BOOLEAN DEFAULT TRUE NOT NULL,
-    data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    data_atualizacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
+CREATE TABLE mottu_usuarios_sistema (
+  id_usuario NUMBER(19) NOT NULL,
+  nome_completo VARCHAR2(100) NOT NULL,
+  email_usuario VARCHAR2(100) NOT NULL UNIQUE,
+  senha_criptografada VARCHAR2(255) NOT NULL,
+  perfil_acesso VARCHAR2(20) DEFAULT 'USUARIO' NOT NULL,
+  ativo NUMBER(1) DEFAULT 1 CHECK (ativo IN (0,1)),
+  data_criacao TIMESTAMP(6) DEFAULT SYSTIMESTAMP,
+  data_atualizacao TIMESTAMP(6),
+  CONSTRAINT PK_MOTTU_USUARIOS_SISTEMA PRIMARY KEY (id_usuario)
 );
 
+-- Sequence para PK
+CREATE SEQUENCE SEQ_MOTTU_USUARIOS_SISTEMA START WITH 1 INCREMENT BY 1 NOCACHE NOCYCLE;
+
+-- Trigger para autoincremento
+CREATE OR REPLACE TRIGGER TRG_MOTTU_USUARIOS_BI
+BEFORE INSERT ON mottu_usuarios_sistema
+FOR EACH ROW
+WHEN (NEW.id_usuario IS NULL)
+BEGIN
+  SELECT SEQ_MOTTU_USUARIOS_SISTEMA.NEXTVAL INTO :NEW.id_usuario FROM DUAL;
+END;
+/
+
+-- Trigger para updated_at
+CREATE OR REPLACE TRIGGER TRG_MOTTU_USUARIOS_BU
+BEFORE UPDATE ON mottu_usuarios_sistema
+FOR EACH ROW
+BEGIN
+  :NEW.data_atualizacao := SYSTIMESTAMP;
+END;
+/
+
 -- Índices para melhorar performance
-CREATE INDEX IF NOT EXISTS idx_mottu_usuarios_email ON mottu_usuarios_sistema(email_usuario);
-CREATE INDEX IF NOT EXISTS idx_mottu_usuarios_ativo ON mottu_usuarios_sistema(ativo);
-CREATE INDEX IF NOT EXISTS idx_mottu_usuarios_perfil ON mottu_usuarios_sistema(perfil_acesso);
+CREATE INDEX idx_mottu_usuarios_email ON mottu_usuarios_sistema(email_usuario);
+CREATE INDEX idx_mottu_usuarios_ativo ON mottu_usuarios_sistema(ativo);
+CREATE INDEX idx_mottu_usuarios_perfil ON mottu_usuarios_sistema(perfil_acesso);
 
 -- Comentários para documentação
 COMMENT ON TABLE mottu_usuarios_sistema IS 'Tabela para armazenar usuários do sistema Mottu';

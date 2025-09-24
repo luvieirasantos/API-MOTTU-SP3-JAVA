@@ -1,35 +1,38 @@
 spring:
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE}
   datasource:
-    url: ${DATABASE_URL}
-    driver-class-name: org.postgresql.Driver
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: oracle.jdbc.OracleDriver
 
   jpa:
+    database-platform: org.hibernate.dialect.OracleDialect
     hibernate:
-      ddl-auto: validate
-    show-sql: true
+      ddl-auto: create-drop
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
-
+        jdbc:
+          lob:
+            non_contextual_creation: true
   flyway:
-    enabled: true
-    baseline-on-migrate: true
+    enabled: false
     locations: classpath:db/migration
-    table: mottu_flyway_schema_history
-    baseline-version: 0
+    validate-on-migrate: true
+    baseline-on-migrate: true
 
 server:
   port: 8080
 
 logging:
   level:
-    org.springframework.security: DEBUG
-    com.fiap: DEBUG
-    org.flywaydb: INFO
+    org.hibernate.SQL: info
+    org.hibernate.orm.jdbc.bind: info
 
 jwt:
-  secret: mottuSecretKey2024Sprint3JavaAdvancedFIAP
+  secret: ${JWT_SECRET}
   expiration: 5184000000 # 2 meses em milissegundos (60 dias)
 
 management:

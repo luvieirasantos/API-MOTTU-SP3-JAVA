@@ -14,6 +14,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -42,7 +43,8 @@ public class MottuUsuario implements UserDetails {
      * - @Column: Mapeia para coluna ID_USUARIO no banco
      */
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_mottu_usuarios")
+    @SequenceGenerator(name = "seq_mottu_usuarios", sequenceName = "SEQ_MOTTU_USUARIOS_SISTEMA", allocationSize = 1)
     @Column(name = "id_usuario")
     private Long id;
 
