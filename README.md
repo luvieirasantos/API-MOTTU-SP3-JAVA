@@ -6,7 +6,7 @@ Melissa Pereira 555656
 Diego Furigo do Nascimento 558755
 
 ## Video no youtube
-https://youtu.be/x_vQFFozHxc
+https://youtu.be/-vqBHPe_I2c
 
 ## 📋 Descrição do Projeto
 
